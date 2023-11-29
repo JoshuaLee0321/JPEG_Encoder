@@ -21,10 +21,9 @@ rgb2y:
         add t3, x11, t1 # compute address of green value
         add t4, x12, t1 # compute address of blue value
         
-
-        lb t2, 0(t2) # load red value
-        lb t3, 0(t3) # load green value
-        lb t4, 0(t4) # load blue value
+        lbu t2, 0(t2) # load red value
+        lbu t3, 0(t3) # load green value
+        lbu t4, 0(t4) # load blue value
 
         li t5, 38 # initialize red multiplier to 38
         mul t2, t2, t5 # multiply red by 38
