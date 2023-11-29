@@ -40,8 +40,7 @@ rgb2y:
         sub t2, t2, t6 # subtract 16320
         srai t2, t2, 7 # divide by 128
         add t5, x13, t1 # compute address of result
-        sb t2, 0(t5) # store result
-
+        sw t2, 0(t5) # store result
         addi t0, t0, -1 # decrement counter
         addi t1, t1, 4 # increment offset
         j loop # jump to loop
