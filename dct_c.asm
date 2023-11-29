@@ -83,27 +83,27 @@ dct_c:
         slli t1, t4, 14 # temp1 = a31 << 14;
         add t2, t1, s0  # temp = temp1 + a23;
         add t2, t2, s10 
-        srli t2, t2, 12 
+        srai t2, t2, 12 
         sw t2, 64(a7) # y[i+16] = (temp + 0x800) >> 12; // Lazy Rounding
         sub t2, t1, s0  # temp = temp1 - a23;
         add t2, t2, s10 
-        srli t2, t2, 12 
+        srai t2, t2, 12 
         sw t2, 192(a7) # y[i+48] = (temp + 0x800) >> 12; // Lazy Rounding
         add t2, t5, s2 # temp = a74 + a43;
         add t2, t2, s10 
-        srli t2, t2, 12 
+        srai t2, t2, 12 
         sw t2, 160(a7)  # y[i+40] = (temp + 0x800) >> 12; // Lazy Rounding
         add t2, t3, s4  # temp = a54 + a63;
         add t2, t2, s10 
-        srli t2, t2, 12 
+        srai t2, t2, 12 
         sw t2, 32(a7)  # y[i+8] = (temp + 0x800) >> 12; // Lazy Rounding
         sub t2, t3, s4 # temp = a54 - a63;
         add t2, t2, s10 
-        srli t2, t2, 12 
+        srai t2, t2, 12 
         sw t2, 224(a7) # y[i+56] = (temp + 0x800) >> 12; // Lazy Rounding
         sub t2, t5, s2 # temp = a74 - a43;
         add t2, t2, s10 
-        srli t2, t2, 12 
+        srai t2, t2, 12 
         sw t2, 96(a7)  # y[i+24] = (temp + 0x800) >> 12; // Lazy Rounding
 
         addi s9, s9, 4 # x += 4;
