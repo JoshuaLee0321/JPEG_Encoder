@@ -1,6 +1,3 @@
-# to do: determine number and addresses of temporary registers
-# subtract 16320 a.k.a. 1100000001000000 idea: li, sl, add 1, sl
-
 .globl rgb2y
 
 rgb2y:
