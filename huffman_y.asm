@@ -65,27 +65,28 @@ huffman_y:
                 j while_zrl # } // end of while (code == 0xf0)
 
             while_zrl_end:
-                li t6, 260
-                beq t5, t6, return # if (in_index == 65) {return;} // If you've read 64 input values, then you know the 65th is junk and the EOB is skipped.
+                li t6, 1
+                bne t1, t6, no_EOB    # if ((val == 1) && (code == 0) {break;}
                 beqz t2, return # if (code == 0) {return;} // on EOB you don't write back val
-                mv s0, t2 # val_inter = code;
-                jal s11, get_AC_Y_val # val_inter = get_AC_Y_val(code);
-                add t6, x15, t4
-                sw s0, 0(t6) # y_val[out_index] = get_AC_Y_val(code);
-                mv s0, s0 # val_inter = get_AC_Y_val(code);
-                jal s11, get_size_AC # val_inter = get_size_AC(get_AC_Y_val(code));
-                add t6, x16, t4
-                sw s0, 0(t6) # y_size[out_index] = get_size_AC(get_AC_Y_val(code));
-                addi t4, t4, 4 # out_index++;
+                no_EOB:
+                    mv s0, t2 # val_inter = code;
+                    jal s11, get_AC_Y_val # val_inter = get_AC_Y_val(code);
+                    add t6, x15, t4
+                    sw s0, 0(t6) # y_val[out_index] = get_AC_Y_val(code);
+                    mv s0, s0 # val_inter = get_AC_Y_val(code);
+                    jal s11, get_size_AC # val_inter = get_size_AC(get_AC_Y_val(code));
+                    add t6, x16, t4
+                    sw s0, 0(t6) # y_size[out_index] = get_size_AC(get_AC_Y_val(code));
+                    addi t4, t4, 4 # out_index++;
 
-                # Debuuging to line 70: beqz t2, return # if (code == 0) {return;} // on EOB you don't write back val   
-                add t6, x15, t4
-                sw t1, 0(t6) # y_val[out_index] = val;
-                mv s0, t1 # val_inter = val;
-                jal s11, get_size # val_inter = get_size(val);
-                add t6, x16, t4
-                sw s0, 0(t6) # y_size[out_index] = get_size(val);
-                addi t4, t4, 4 # out_index++;
+                    beqz t2, return # if (code == 0) {return;} // on EOB you don't write back val   
+                    add t6, x15, t4
+                    sw t1, 0(t6) # y_val[out_index] = val;
+                    mv s0, t1 # val_inter = val;
+                    jal s11, get_size # val_inter = get_size(val);
+                    add t6, x16, t4
+                    sw s0, 0(t6) # y_size[out_index] = get_size(val);
+                    addi t4, t4, 4 # out_index++;
 
             j inner_while # } // end of while (code > 0)
         j outer_while # } // end of while (1)
