@@ -38,9 +38,9 @@ huffman_y:
         li t2, 1        # code = 1; // to start loop
 
         inner_while:    # while (code > 0) {
-            ble t2, x0, return
             add t6, x11, t5
             lw t2, 0(t6)    # code = x_code[in_index];
+            ble t2, x0, return
             add t6, x10, t5
             lw t1, 0(t6)    # val = x_val[in_index];
             addi t5, t5, 4  # in_index++;
@@ -108,9 +108,6 @@ huffman_y:
     
      get_size_AC: # 	uint16_t get_size(short val){
         mv s1, s0 
-        bne s1, x0, neg_2s_comp # 	if (val == 0) {return 0;}
-        li s0, 0
-        jalr x0, 0(s11)
         neg_2s_comp:
             bge s1, x0, lookup # 	if (val < 0) {val = ~val + 1;} // use 2's comp to find size
             not s1, s1
@@ -144,8 +141,15 @@ huffman_y:
             size_1:
                 li s2, 0x2
                 and s2, s1, s2
-                beqz s2, return_size_AC  # if (val & 0x2) {
+                beqz s2, size_0  # if (val & 0x2) {
                 ori s0, s0, 1       # size |= 1; }
+
+            size_0:
+                li s2, 2
+                bge s0, s2, return_size_AC # if (size < 2) {return 2;}
+                li s0, 2
+                jalr x0, 0(s11)
+
             
         return_size_AC:
             addi s0, s0, 1   # return (size+1);
