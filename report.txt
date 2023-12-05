@@ -1,0 +1,30 @@
+Describe 3 changes/optimizations that can be made to a RISC-V processor to improve its JPEG
+compression performance. (5 sentences per idea minimum). You will be graded on how realistic it is to
+implement the change, if it would actually work, and if the change is correctly detailed. Do not simply
+say something like “add a cache,” instead explain what type of cache, and why, ect.
+
+Change 1: sw offset(r1), offset(rd)
+During the zigzagging step in particular, this new instruction discussed in the midterm would cut off a decent amount of instructions, since two instructions, 
+specifically the pattern of a lw followed by a sw could be expressed by one instruction. Significant changes would have to be made to the processor, as we 
+would need two CPUs and two Immediate handling units, to handle the offset computation as well as the generation and sign-extension of the immediates, respectively.
+Furthermore, we would need an additional wire from the read output of the data memory directly back into the write input of the data memory.
+To control this potentially hazardous wire, we would need additional MUXs and logic. Perhaps, we would also have to adjust or extend the Instruction Types to support
+larger ranges of immediates since supporting two of them essentially cuts the range in half. 
+
+Change 2: SIMD (Single Instruction, Multiple Data) Support
+During steps like quantization, YCbCr Conversion and Level-Shift, DCT II, Run Length and Huffman Encoding, we independently perform computations on single pixels, values or chunks of data, respectively.
+This indicates a huge potential for efficient parallelization. To support this type of data parallelism, we could utilize the existing infrastructure to fetch instructions, but
+would have to add a new instruction type and the corresponding logic and hardware to support different types of SIMD computations like +,-,/,*. Particularly, we 
+would have to add and support vector registers, that hold chunks of data, to read from and write to. After adding more CPUs, those vectore registers could then be specified just like 
+classic registers, but operations would be performed simultaneously on the distinct elements of the vector registers, even though all CPUs execute the same instruction.
+
+Change 3: Caching
+Often times, memory latency is the biggest bottleneck to high performance because the penalty of reaching out to higher levels of the memory hierarchy may be numbers
+of magnitude higher than the time required to perform some additional computations. Therefore, we strive for high computational intensity if performance matters and
+it makes sense to invest some thought into efficiently exploiting the concept of memory hierarchies. In image processing, we have to fetch every single pixel of
+potentially huge images. (4k, 8k, etc.) For example, we could add a small cache directly attached to the processor or to the chip itsself, in case there are 
+multiple processors/CPUs on the chip. In reality, we we would probably do both. Just throwing cache at a problem, however, might not be feasible, since it tends 
+to be expensive. Therefore, we could take a look at the image sizes, we'd like to process and try to come up with a sweetspot, where the whole picture or just parts
+of it like blocks, columns or rows, perfectly fit into those very low levels of cache on the chip. Perhaps, we could combine that approach with SIMD or true parallelism
+of multiple CPUs to tremendously speed up the performance. It might be necessary, though, that the programmers have to make sure to efficiently exploit those caches
+by explicitly blocking, tiling and/or copying the image and its parts into cache.
