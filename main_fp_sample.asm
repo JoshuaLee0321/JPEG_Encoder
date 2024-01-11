@@ -1,7 +1,45 @@
+    .equ STDOUT, 1
+    .equ WRITE, 64
+    .equ EXIT, 93
 .data
-
 space : .asciz " "
 comma : .asciz ","
+comma_ascii:
+	 .ascii ","
+	 .align 2
+# string section 
+rgb2y_text:
+    .ascii "rgb2y:\n"
+    .align 2
+dct_c_text:
+	.ascii "dct_c:\n"
+	.align 2
+dct_r_text:
+	.ascii "dct_r:\n"
+	.align 2
+nq_y_text:
+	.ascii "nq_y:\n"
+	.align 2
+nzigzag_text:
+	.ascii "nzigzag:\n"
+	.align 2
+nrlecodes_text:
+	.ascii "nrle codes: \n"
+	.align 2
+nrlevals_text:
+	.ascii "nrle vals:\n"
+	.align 2
+nhuffman_y_vals_text:
+	.ascii "nhuffman_y vals:\n"
+	.align 2
+nhuffman_y_size_text:
+	.ascii "nhuffman_y size:\n"
+	.align 2
+norganize_text:
+	.ascii "norganize:\n"
+	.align 2
+
+# end of string section
 
 arr_R: .word 0,0,0,0,0,0,0,0,0,0,255,255,0,0,0,255,0,0,0,255,255,255,255,255,255,255,0,255,0,255,255,0,255,255,0,237,255,255,255,255,34,255,34,255,255,255,255,34,34,255,255,255,255,255,255,34,34,34,255,255,255,255,255,34
 
@@ -123,6 +161,45 @@ skip_comma:
 .endm
 */
 
+.macro  print_array arr, size
+
+	addi t1,zero,0
+	li t5,4
+	mul t5,t5,\size
+	
+	while: 
+		lw t4, 0(\arr)
+
+		addi \arr,\arr,4
+		
+		addi t1,t1,4
+
+		# 照理來說要可以打印出 t4 的值，但這邊都沒有辦法打印出來
+		li a0, STDOUT  
+		mv a1, t4
+		li a2, 4
+		li a7, WRITE
+		ecall
+			
+		bge t1, t5, skip_comma
+
+		print_text comma_ascii 1
+
+		j while
+skip_comma:
+
+.endm
+
+.macro print_text str, length
+	li a0, STDOUT
+	la a1, \str
+	li a2, \length
+	li a7, WRITE
+	ecall
+.endm
+
+# ---- text section ---- #
+
 .globl main
 main: 
 
@@ -133,17 +210,23 @@ main:
 	la x12,arr_B
 	la x13,arr_Y
 	call rgb2y
-	# print_str "rgb2y: "
+	# --- print rgb2y status
+	print_text rgb2y_text 7
+	# --- 
+
 	la t2, arr_Y
     li x11, 64
-	# print_array t2,x11
+	print_array t2,x11
 
     # to test dct_c function
 	la x10,arr_Y
 	# la x10,arr_sample_Y
 	la x11,arr_dct_c
 	call dct_c
-	# print_str "\n\ndct_c: "
+	# --- print_str "\n\ndct_c: "
+	print_text dct_c_text 7
+	# --- 
+
 	la t2, arr_dct_c
     li x11, 64
 	# print_array t2,x11
@@ -153,7 +236,11 @@ main:
 	# la x10,arr_sample_dct_c
 	la x11,arr_dct_r
 	call dct_r
-	# print_str "\n\ndct_r: "
+	# --- print_str "\n\ndct_r: "
+	print_text dct_r_text 7
+	# ----
+
+
 	la t2, arr_dct_r
     li x11, 64
 	# print_array t2,x11
@@ -165,6 +252,8 @@ main:
 	la x12,arr_quant
 	call q_y
 	# print_str "\n\nq_y: "
+	print_text nq_y_text 6
+
 	la t2, arr_quant
     li x11, 64
 	# print_array t2,x11
@@ -175,6 +264,8 @@ main:
 	la x11,arr_zigzag
 	call zigzag
 	# print_str "\n\nzigzag: "
+	print_text nzigzag_text 9
+
 	la t2, arr_zigzag
     li x11, 64
 	# print_array t2,x11
@@ -186,10 +277,14 @@ main:
 	la x12,arr_rle_vals
 	call rle
 	# print_str "\n\nrle codes: "
+	print_text nrlecodes_text 13
+
 	la t2, arr_rle_codes
     	li x11, 64
 	# print_array t2,x11
 	# print_str "\n\nrle vals: "
+	print_text nrlevals_text 11
+
 	la t2, arr_rle_vals
     	li x11, 64
 	# print_array t2,x11
@@ -206,10 +301,14 @@ main:
 	la x16,arr_huffman_size
 	call huffman_y
 	# print_str "\n\nhuffman_y vals: "
+	print_text nhuffman_y_vals_text 17
+
 	la t2, arr_huffman_vals
     li x11, 128
 	# print_array t2,x11
 	# print_str "\n\nhuffman_y sizes: "
+	print_text nhuffman_y_size_text 17
+
 	la t2, arr_huffman_size
     li x11, 128
 	# print_array t2,x11
@@ -222,6 +321,8 @@ main:
 	la x12,arr_out
 	call organize
 	# print_str "\n\norganize:"
+	print_text norganize_text 11
+
 	la t2, arr_out
     	li x11, 67
 	# print_array t2,x11
