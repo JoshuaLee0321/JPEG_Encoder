@@ -60,6 +60,8 @@ arr_sample_out: .word 247,255,0,10,126,205,223,6,96,248,39,226,175,16,233,127,10
 .text
 
 # macro to terminate the simualtion
+/*
+
 .macro exit
 	.text
 		li a7,10
@@ -83,7 +85,7 @@ arr_sample_out: .word 247,255,0,10,126,205,223,6,96,248,39,226,175,16,233,127,10
 .endm
 
 # macro to print a string
-.macro print_str str
+.macro # print_str str
 	.data
 		str_label: .string "str"
 	.text
@@ -92,7 +94,7 @@ arr_sample_out: .word 247,255,0,10,126,205,223,6,96,248,39,226,175,16,233,127,10
 		ecall
 .endm
 
-.macro print_array arr, size
+.macro # print_array arr, size
 
 	addi t1,zero,0
 	li t5,4
@@ -119,7 +121,7 @@ arr_sample_out: .word 247,255,0,10,126,205,223,6,96,248,39,226,175,16,233,127,10
 skip_comma:
 
 .endm
-
+*/
 
 .globl main
 main: 
@@ -131,30 +133,30 @@ main:
 	la x12,arr_B
 	la x13,arr_Y
 	call rgb2y
-	print_str "rgb2y: "
+	# print_str "rgb2y: "
 	la t2, arr_Y
     li x11, 64
-	print_array t2,x11
+	# print_array t2,x11
 
     # to test dct_c function
 	la x10,arr_Y
 	# la x10,arr_sample_Y
 	la x11,arr_dct_c
 	call dct_c
-	print_str "\n\ndct_c: "
+	# print_str "\n\ndct_c: "
 	la t2, arr_dct_c
     li x11, 64
-	print_array t2,x11
+	# print_array t2,x11
 
     #to test dct_r function
 	la x10,arr_dct_c
 	# la x10,arr_sample_dct_c
 	la x11,arr_dct_r
 	call dct_r
-	print_str "\n\ndct_r: "
+	# print_str "\n\ndct_r: "
 	la t2, arr_dct_r
     li x11, 64
-	print_array t2,x11
+	# print_array t2,x11
 
     #to test q_y function
 	la x10,arr_dct_r
@@ -162,20 +164,20 @@ main:
 	la x11,arr_quantization_table
 	la x12,arr_quant
 	call q_y
-	print_str "\n\nq_y: "
+	# print_str "\n\nq_y: "
 	la t2, arr_quant
     li x11, 64
-	print_array t2,x11
+	# print_array t2,x11
 
     #to test zigzag function
 	la x10,arr_quant
 	# la x10,arr_sample_quant
 	la x11,arr_zigzag
 	call zigzag
-	print_str "\n\nzigzag: "
+	# print_str "\n\nzigzag: "
 	la t2, arr_zigzag
     li x11, 64
-	print_array t2,x11
+	# print_array t2,x11
 
     #to test rle function
 	la x10,arr_zigzag
@@ -183,14 +185,14 @@ main:
 	la x11,arr_rle_codes
 	la x12,arr_rle_vals
 	call rle
-	print_str "\n\nrle codes: "
+	# print_str "\n\nrle codes: "
 	la t2, arr_rle_codes
     	li x11, 64
-	print_array t2,x11
-	print_str "\n\nrle vals: "
+	# print_array t2,x11
+	# print_str "\n\nrle vals: "
 	la t2, arr_rle_vals
     	li x11, 64
-	print_array t2,x11
+	# print_array t2,x11
 
     #to test huffman_y function
 	la x10,arr_rle_vals
@@ -203,14 +205,14 @@ main:
 	la x15,arr_huffman_vals
 	la x16,arr_huffman_size
 	call huffman_y
-	print_str "\n\nhuffman_y vals: "
+	# print_str "\n\nhuffman_y vals: "
 	la t2, arr_huffman_vals
     li x11, 128
-	print_array t2,x11
-	print_str "\n\nhuffman_y sizes: "
+	# print_array t2,x11
+	# print_str "\n\nhuffman_y sizes: "
 	la t2, arr_huffman_size
     li x11, 128
-	print_array t2,x11
+	# print_array t2,x11
 
     #to test organize function
 	la x10,arr_huffman_vals
@@ -219,9 +221,13 @@ main:
 	# la x11,arr_sample_huffman_size
 	la x12,arr_out
 	call organize
-	print_str "\n\norganize:"
+	# print_str "\n\norganize:"
 	la t2, arr_out
     	li x11, 67
-	print_array t2,x11
+	# print_array t2,x11
 		
-	exit 
+	# exit 
+	addi sp, sp, 4
+	addi a7, zero, 93 # syscall 93 is exit
+	addi a0, x0, 0
+	ecall
