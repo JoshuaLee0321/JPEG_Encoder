@@ -174,7 +174,8 @@ skip_comma:
 		
 		addi t1,t1,4
 
-		# 照理來說要可以打印出 t4 的值，但這邊都沒有辦法打印出來
+		# ssize_t write(int fd, const void *buf, size_t count);
+		# 第二個參數 a1 是一個 void *buf 也就是指標
 		li a0, STDOUT  
 		mv a1, t4
 		li a2, 4
