@@ -1,7 +1,7 @@
     .equ STDOUT, 1
     .equ WRITE, 64
     .equ EXIT, 93
-
+	.equ CLKGET, 403
 	.option nopic
 	.attribute arch, "rv32i2p1_m2p0_a2p1_c2p0"
 	.attribute unaligned_access, 0
@@ -15,17 +15,25 @@
 	.align	1
 	.globl	main
 	.type	main, @function
-
+.LC1:
+	.string	"current tick: %ld\n\n"
+	.text
+	.align	1
+	.globl	gettime
+	.type	gettime, @function
 .data
 space : .asciz " "
 comma : .asciz ","
 line_ascii:
-	 .ascii "\n"
+	 .ascii "\n\n"
 	 .align 2
 comma_ascii:
 	 .ascii ","
 	 .align 2
 # string section 
+elapse_cycle_text:
+	.ascii "\tcycle elapsed: "
+	.align 2
 rgb2y_text:
     .ascii "rgb2y:\n"
     .align 2
@@ -191,8 +199,6 @@ skip_comma:
 		
 		addi s1,s1,4
 
-		# ssize_t write(int fd, const void *buf, size_t count);
-		# 第二個參數 a1 是一個 void *buf 也就是指標
 		mv	a0, t4
 		call	printFunct
 	
@@ -202,7 +208,7 @@ skip_comma:
 
 		j \whilename
 \endname:
-	print_text line_ascii 1
+	print_text line_ascii 2
 .endm
 
 .macro print_text str, length
@@ -217,22 +223,27 @@ skip_comma:
 
 .globl main
 main: 
-
 # Use the following labels for functions
 	#to test rgb2y function
 	la x10,arr_R
 	la x11,arr_G
 	la x12,arr_B
 	la x13,arr_Y
+	rdcycle s0
 	call rgb2y
+	rdcycle s1
 	# --- print rgb2y status
 	print_text rgb2y_text 7
+	print_text elapse_cycle_text 16
+	sub a0, s1, s0
+	call printFunct
+	print_text line_ascii 1
 	# --- 
-
+	
 	la t2, arr_Y
     li x11, 64
 	print_array t2,x11, while1, end1
-
+	
     # to test dct_c function
 	la x10,arr_Y
 	# la x10,arr_sample_Y
@@ -244,7 +255,7 @@ main:
 
 	la t2, arr_dct_c
     li x11, 64
-	# print_array t2,x11
+	print_array t2,x11, whil2, end2
 
     #to test dct_r function
 	la x10,arr_dct_c
@@ -258,7 +269,7 @@ main:
 
 	la t2, arr_dct_r
     li x11, 64
-	# print_array t2,x11
+	print_array t2,x11, whil3, end3
 
     #to test q_y function
 	la x10,arr_dct_r
@@ -271,7 +282,7 @@ main:
 
 	la t2, arr_quant
     li x11, 64
-	# print_array t2,x11
+	print_array t2,x11, whil4, end4
 
     #to test zigzag function
 	la x10,arr_quant
@@ -283,7 +294,7 @@ main:
 
 	la t2, arr_zigzag
     li x11, 64
-	# print_array t2,x11
+	print_array t2,x11, whil5, end5
 
     #to test rle function
 	la x10,arr_zigzag
@@ -296,13 +307,13 @@ main:
 
 	la t2, arr_rle_codes
     	li x11, 64
-	# print_array t2,x11
+	print_array t2,x11, whil6, end6
 	# print_str "\n\nrle vals: "
 	print_text nrlevals_text 11
 
 	la t2, arr_rle_vals
     	li x11, 64
-	# print_array t2,x11
+	print_array t2,x11, whil7, end7
 
     #to test huffman_y function
 	la x10,arr_rle_vals
@@ -320,13 +331,13 @@ main:
 
 	la t2, arr_huffman_vals
     li x11, 128
-	# print_array t2,x11
+	print_array t2,x11, whil8, end8
 	# print_str "\n\nhuffman_y sizes: "
 	print_text nhuffman_y_size_text 17
 
 	la t2, arr_huffman_size
     li x11, 128
-	# print_array t2,x11
+	print_array t2,x11, whil9, end9
 
     #to test organize function
 	la x10,arr_huffman_vals
@@ -340,7 +351,7 @@ main:
 
 	la t2, arr_out
     	li x11, 67
-	# print_array t2,x11
+	print_array t2,x11, whil10, end10
 		
 	# exit 
 	addi sp, sp, 4
@@ -375,6 +386,27 @@ printFunct:
 	addi	sp,sp,64
 	jr	ra
 	.size	printFunct, .-printFunct
+	.align	1
+	.globl	main
+	.type	main, @function
+
+gettime:
+	addi	sp,sp,-32
+	sw	ra,28(sp)
+	mv	a1,sp
+	li	a0,0
+	li	a7, CLKGET
+	
+	call printFunct
+	lw	a1,8(sp)
+	lui	a0,%hi(.LC1)
+	addi	a0,a0,%lo(.LC1)
+	call	printf
+	lw	a0,8(sp)
+	lw	ra,28(sp)
+	addi	sp,sp,32
+	jr	ra
+	.size	gettime, .-gettime
 	.align	1
 	.globl	main
 	.type	main, @function
