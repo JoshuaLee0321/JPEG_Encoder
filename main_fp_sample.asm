@@ -180,38 +180,23 @@ skip_comma:
 
 .macro  print_array arr, size
 
-	addi t1,zero,0
-	li t5,4
-	mul t5,t5,\size
+	addi s1,zero,0
+	li s0,4
+	mul s0,s0,\size
 	
 	while: 
 		lw t4, 0(\arr)
 
 		addi \arr,\arr,4
 		
-		addi t1,t1,4
+		addi s1,s1,4
 
 		# ssize_t write(int fd, const void *buf, size_t count);
 		# 第二個參數 a1 是一個 void *buf 也就是指標
-		# 這裡幫我打印 t4
-		addi	s0,sp,48
-		addi	a4,s0,-44
-		lw	a2,-20(s0)
-		lui	a5,%hi(.LC0)
-		addi	a1,a5,%lo(.LC0)
-		mv	a0,a4
-		# call	sprintf
-		# sw	a0,-24(s0)
-		# lw	a4,-24(s0)
-		# addi	a5,s0,-44
-		# mv	a2,a4
-		# mv	a1,a5
-		# li	a0, STDOUT
-		# li a7, WRITE
-		# ecall
-		
-
-		bge t1, t5, skip_comma
+		mv	a0, t4
+		call	printFunct
+	
+		bge s1, s0, skip_comma
 
 		print_text comma_ascii 1
 
@@ -362,3 +347,34 @@ main:
 	addi a7, zero, 93 # syscall 93 is exit
 	addi a0, x0, 0
 	ecall
+
+printFunct:
+	addi	sp,sp,-64
+	sw	ra,60(sp)
+	sw	s0,56(sp)
+	sw  s1,52(sp)
+	addi	s0,sp,64
+	sw	a0,-52(s0)
+	addi	a4,s0,-40
+	lw	a2,-52(s0)
+	lui	a5,%hi(.LC0)
+	addi	a1,a5,%lo(.LC0)
+	mv	a0,a4
+	call	sprintf
+	sw	a0,-20(s0)
+	lw	a4,-20(s0)
+	addi	a5,s0,-40
+	mv	a2,a4
+	mv	a1,a5
+	li	a0,1
+	call	write
+	nop
+	lw	ra,60(sp)
+	lw	s0,56(sp)
+	lw  s1,52(sp)
+	addi	sp,sp,64
+	jr	ra
+	.size	printFunct, .-printFunct
+	.align	1
+	.globl	main
+	.type	main, @function
