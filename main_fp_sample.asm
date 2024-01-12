@@ -1,9 +1,27 @@
     .equ STDOUT, 1
     .equ WRITE, 64
     .equ EXIT, 93
+
+	.option nopic
+	.attribute arch, "rv32i2p1_m2p0_a2p1_c2p0"
+	.attribute unaligned_access, 0
+	.attribute stack_align, 16
+	.text
+	.section	.rodata
+	.align	2
+.LC0:
+	.string	"%d"
+	.text
+	.align	1
+	.globl	main
+	.type	main, @function
+
 .data
 space : .asciz " "
 comma : .asciz ","
+line_ascii:
+	 .ascii "\n"
+	 .align 2
 comma_ascii:
 	 .ascii ","
 	 .align 2
@@ -40,7 +58,6 @@ norganize_text:
 	.align 2
 
 # end of string section
-
 arr_R: .word 0,0,0,0,0,0,0,0,0,0,255,255,0,0,0,255,0,0,0,255,255,255,255,255,255,255,0,255,0,255,255,0,255,255,0,237,255,255,255,255,34,255,34,255,255,255,255,34,34,255,255,255,255,255,255,34,34,34,255,255,255,255,255,34
 
 arr_G: .word 183,0,0,183,183,183,183,0,183,183,242,194,183,183,183,194,183,183,183,242,242,242,242,194,194,194,183,242,0,242,242,0,194,194,183,28,242,242,242,194,177,194,177,242,194,194,194,177,177,194,242,194,242,194,242,177,177,177,242,194,194,194,194,177
@@ -176,19 +193,32 @@ skip_comma:
 
 		# ssize_t write(int fd, const void *buf, size_t count);
 		# 第二個參數 a1 是一個 void *buf 也就是指標
-		li a0, STDOUT  
-		mv a1, t4
-		li a2, 4
+		# 這裡幫我打印 t4
+		addi	s0,sp,48
+		addi	a4,s0,-44
+		lw	a2,-20(s0)
+		lui	a5,%hi(.LC0)
+		addi	a1,a5,%lo(.LC0)
+		mv	a0,a4
+		call	sprintf
+		sw	a0,-24(s0)
+		lw	a4,-24(s0)
+		addi	a5,s0,-44
+		mv	a2,a4
+		mv	a1,a5
+		li	a0, STDOUT
 		li a7, WRITE
 		ecall
-			
+		
+		li	a5,0
+		mv	a0,a5
 		bge t1, t5, skip_comma
 
 		print_text comma_ascii 1
 
 		j while
 skip_comma:
-
+	print_text line_ascii 1
 .endm
 
 .macro print_text str, length
