@@ -200,18 +200,17 @@ skip_comma:
 		lui	a5,%hi(.LC0)
 		addi	a1,a5,%lo(.LC0)
 		mv	a0,a4
-		call	sprintf
-		sw	a0,-24(s0)
-		lw	a4,-24(s0)
-		addi	a5,s0,-44
-		mv	a2,a4
-		mv	a1,a5
-		li	a0, STDOUT
-		li a7, WRITE
-		ecall
+		# call	sprintf
+		# sw	a0,-24(s0)
+		# lw	a4,-24(s0)
+		# addi	a5,s0,-44
+		# mv	a2,a4
+		# mv	a1,a5
+		# li	a0, STDOUT
+		# li a7, WRITE
+		# ecall
 		
-		li	a5,0
-		mv	a0,a5
+
 		bge t1, t5, skip_comma
 
 		print_text comma_ascii 1
