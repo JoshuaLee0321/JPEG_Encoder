@@ -178,13 +178,13 @@ skip_comma:
 .endm
 */
 
-.macro  print_array arr, size
+.macro  print_array arr, size, whilename, endname
 
 	addi s1,zero,0
 	li s0,4
 	mul s0,s0,\size
 	
-	while: 
+	\whilename: 
 		lw t4, 0(\arr)
 
 		addi \arr,\arr,4
@@ -196,12 +196,12 @@ skip_comma:
 		mv	a0, t4
 		call	printFunct
 	
-		bge s1, s0, skip_comma
+		bge s1, s0, \endname
 
 		print_text comma_ascii 1
 
-		j while
-skip_comma:
+		j \whilename
+\endname:
 	print_text line_ascii 1
 .endm
 
@@ -231,7 +231,7 @@ main:
 
 	la t2, arr_Y
     li x11, 64
-	print_array t2,x11
+	print_array t2,x11, while1, end1
 
     # to test dct_c function
 	la x10,arr_Y
