@@ -248,9 +248,15 @@ main:
 	la x10,arr_Y
 	# la x10,arr_sample_Y
 	la x11,arr_dct_c
+	rdcycle s0
 	call dct_c
+	rdcycle s1
 	# --- print_str "\n\ndct_c: "
 	print_text dct_c_text 7
+	print_text elapse_cycle_text 16
+	sub a0, s1, s0
+	call printFunct
+	print_text line_ascii 1
 	# --- 
 
 	la t2, arr_dct_c
@@ -261,9 +267,15 @@ main:
 	la x10,arr_dct_c
 	# la x10,arr_sample_dct_c
 	la x11,arr_dct_r
+	rdcycle s0
 	call dct_r
+	rdcycle s1
 	# --- print_str "\n\ndct_r: "
 	print_text dct_r_text 7
+	print_text elapse_cycle_text 16
+	sub a0, s1, s0
+	call printFunct
+	print_text line_ascii 1
 	# ----
 
 
@@ -276,9 +288,15 @@ main:
 	# la x10,arr_sample_dct_r
 	la x11,arr_quantization_table
 	la x12,arr_quant
+	rdcycle s0
 	call q_y
+	rdcycle s1
 	# print_str "\n\nq_y: "
 	print_text nq_y_text 6
+	print_text elapse_cycle_text 16
+	sub a0, s1, s0
+	call printFunct
+	print_text line_ascii 1
 
 	la t2, arr_quant
     li x11, 64
@@ -288,9 +306,15 @@ main:
 	la x10,arr_quant
 	# la x10,arr_sample_quant
 	la x11,arr_zigzag
+	rdcycle s0
 	call zigzag
+	rdcycle s1
 	# print_str "\n\nzigzag: "
 	print_text nzigzag_text 9
+	print_text elapse_cycle_text 16
+	sub a0, s1, s0
+	call printFunct
+	print_text line_ascii 1
 
 	la t2, arr_zigzag
     li x11, 64
@@ -301,9 +325,15 @@ main:
 	# la x10,arr_sample_zigzag
 	la x11,arr_rle_codes
 	la x12,arr_rle_vals
+	rdcycle s0	
 	call rle
+	rdcycle s1
 	# print_str "\n\nrle codes: "
 	print_text nrlecodes_text 13
+	print_text elapse_cycle_text 16
+	sub a0, s1, s0
+	call printFunct
+	print_text line_ascii 1
 
 	la t2, arr_rle_codes
     	li x11, 64
@@ -325,9 +355,15 @@ main:
 	la x14,arr_AC_huffman_table
 	la x15,arr_huffman_vals
 	la x16,arr_huffman_size
+	rdcycle s0
 	call huffman_y
+	rdcycle s1
 	# print_str "\n\nhuffman_y vals: "
 	print_text nhuffman_y_vals_text 17
+	print_text elapse_cycle_text 16
+	sub a0, s1, s0
+	call printFunct
+	print_text line_ascii 1
 
 	la t2, arr_huffman_vals
     li x11, 128
@@ -345,9 +381,15 @@ main:
 	la x11,arr_huffman_size
 	# la x11,arr_sample_huffman_size
 	la x12,arr_out
+	rdcycle s0
 	call organize
+	rdcycle s1
 	# print_str "\n\norganize:"
 	print_text norganize_text 11
+	print_text elapse_cycle_text 16
+	sub a0, s1, s0
+	call printFunct
+	print_text line_ascii 1
 
 	la t2, arr_out
     	li x11, 67
