@@ -2,8 +2,9 @@
 
 rgb2y:
 
-    addi sp, sp , -4 # allocate space for stack frame by adujusting the stack pointer (sp register)
+    addi sp, sp , -8 # allocate space for stack frame by adujusting the stack pointer (sp register)
 	sw ra, 0(sp) # save the return address (ra register) 
+    sw s0, 4(sp)
     # save other registers to stack if needed
 
     li t0, 64 # intialize counter to 64 (8x8 pixels)
@@ -46,5 +47,6 @@ rgb2y:
 		# return X13
 		# restore registers from stack if needed
 		lw ra, 0(sp) # Restore return address register
-		addi sp, sp, 4 # deallocate space for stack frame
+        lw s0, 4(sp)
+		addi sp, sp, 8 # deallocate space for stack frame
 		ret # return to calling point

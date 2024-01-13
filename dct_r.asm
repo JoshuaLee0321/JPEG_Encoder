@@ -1,8 +1,9 @@
 .globl dct_r
 
 dct_r:
-    addi sp, sp , -4 # allocate space for stack frame by adujusting the stack pointer (sp register)
+    addi sp, sp , -8 # allocate space for stack frame by adujusting the stack pointer (sp register)
 	sw ra, 0(sp) # save the return address (ra register) 
+    sw s0, 4(sp)
     # save other registers to stack if needed
     
     li t0, 8 # for(uint8_t i = 0; i < 8; i++){ // for each column
@@ -113,5 +114,6 @@ dct_r:
     return:
         # restore registers from stack if needed
         lw ra, 0(sp) # Restore return address register
-        addi sp, sp, 4 # deallocate space for stack frame
+        lw s0, 4(sp)
+        addi sp, sp, 8 # deallocate space for stack frame
         ret # return to calling point

@@ -1,8 +1,9 @@
 .globl rle
 
 rle:
-    addi sp, sp , -4 # allocate space for stack frame by adujusting the stack pointer (sp register)
+    addi sp, sp , -8 # allocate space for stack frame by adujusting the stack pointer (sp register)
 	sw ra, 0(sp) # save the return address (ra register) 
+    sw s0, 4(sp)
     # save other registers to stack if needed
 
     sw x0, 0(x11)   # y_code[0] = 0x0000; // not used, but put here for easier coding on later steps
@@ -111,5 +112,6 @@ rle:
     return:
         # restore registers from stack if needed
         lw ra, 0(sp) # Restore return address register
-        addi sp, sp, 4 # deallocate space for stack frame
+        sw s0, 4(sp)
+        addi sp, sp, 8 # deallocate space for stack frame
         ret # return to calling point

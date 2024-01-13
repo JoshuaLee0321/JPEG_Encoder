@@ -1,8 +1,9 @@
 .globl q_y
 
 q_y:
-    addi sp, sp , -4 # allocate space for stack frame by adujusting the stack pointer (sp register)
+    addi sp, sp , -8 # allocate space for stack frame by adujusting the stack pointer (sp register)
 	sw ra, 0(sp) # save the return address (ra register) 
+    sw s0, 4(sp)
     # save other registers to stack if needed
     
     li s3, 64 # for(uint8_t i = 64; i > 0; i--){
@@ -33,5 +34,6 @@ q_y:
     return:
         # restore registers from stack if needed
         lw ra, 0(sp) # Restore return address register
-        addi sp, sp, 4 # deallocate space for stack frame
+        lw s0, 4(sp)
+        addi sp, sp, 8 # deallocate space for stack frame
         ret # return to calling point
