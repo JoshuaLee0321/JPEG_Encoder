@@ -242,7 +242,7 @@ main:
 	
 	la t2, arr_Y
     li x11, 64
-	print_array t2,x11, while1, end1
+	# print_array t2,x11, while1, end1
 	
     # to test dct_c function
 	la x10,arr_Y
@@ -261,7 +261,7 @@ main:
 
 	la t2, arr_dct_c
     li x11, 64
-	print_array t2,x11, whil2, end2
+	# print_array t2,x11, whil2, end2
 
     #to test dct_r function
 	la x10,arr_dct_c
@@ -281,7 +281,7 @@ main:
 
 	la t2, arr_dct_r
     li x11, 64
-	print_array t2,x11, whil3, end3
+	# print_array t2,x11, whil3, end3
 
     #to test q_y function
 	la x10,arr_dct_r
@@ -300,7 +300,7 @@ main:
 
 	la t2, arr_quant
     li x11, 64
-	print_array t2,x11, whil4, end4
+	# print_array t2,x11, whil4, end4
 
     #to test zigzag function
 	la x10,arr_quant
@@ -318,7 +318,7 @@ main:
 
 	la t2, arr_zigzag
     li x11, 64
-	print_array t2,x11, whil5, end5
+	# print_array t2,x11, whil5, end5
 
     #to test rle function
 	la x10,arr_zigzag
@@ -343,7 +343,7 @@ main:
 
 	la t2, arr_rle_vals
     	li x11, 64
-	print_array t2,x11, whil7, end7
+	# print_array t2,x11, whil7, end7
 
     #to test huffman_y function
 	la x10,arr_rle_vals
@@ -367,13 +367,13 @@ main:
 
 	la t2, arr_huffman_vals
     li x11, 128
-	print_array t2,x11, whil8, end8
+	# print_array t2,x11, whil8, end8
 	# print_str "\n\nhuffman_y sizes: "
 	print_text nhuffman_y_size_text 17
 
 	la t2, arr_huffman_size
     li x11, 128
-	print_array t2,x11, whil9, end9
+	# print_array t2,x11, whil9, end9
 
     #to test organize function
 	la x10,arr_huffman_vals
@@ -393,7 +393,7 @@ main:
 
 	la t2, arr_out
     	li x11, 67
-	print_array t2,x11, whil10, end10
+	# print_array t2,x11, whil10, end10
 		
 	# exit 
 	addi sp, sp, 4

@@ -7,6 +7,11 @@ long gettime(){
     return tv.tv_nsec;
 }
 int main() {
-    gettime();
+    int a = 39;
+    for(int i = 0; i< 100; i++) {
+
+        a = i * 38;
+        printf("%d", a);
+    }
     return 0;
 }
